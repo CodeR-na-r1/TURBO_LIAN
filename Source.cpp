@@ -31,23 +31,25 @@ int main() {
 	}
 
 	cv::Mat img;
+
 	cv::cvtColor(rawImg, img, cv::COLOR_BGR2GRAY);
 
 	img.setTo(255, img > 200);
 	img.setTo(0, img != 255);
 
-	Point start = Point(165, 305);
-	Point goal = Point(410, 420);
+	Map m(img);
+	std::cout << std::boolalpha << ((int)m.getMap().at<uchar>(cv::Point(168, 305))) << std::endl;
 
-	cv::circle(img, cv::Point(start.x, start.y), 3, cv::Scalar(0, 0, 255), 1, cv::FILLED);
-	cv::circle(img, cv::Point(goal.x, goal.y), 3, cv::Scalar(0, 255, 0), 1, cv::FILLED);
+	Point start = Point(165, 305);
+	Point goal = Point(1287, 689);
+
 
 	Point point = Point(100, 100);
 
 	// --- testing ---
 
 	cout << "Test Geometry" << endl;
-
+	/*
 	cout << "Distance between vectors" << endl;
 	cout << distanceBetweenPoints(start, goal) << endl;
 
@@ -71,17 +73,17 @@ int main() {
 	// test Map
 
 	cout << "Test Map" << endl;
-
-	Map m(img);
+	*/
+	/*
 	cout << "isFree1" << m.isFree(start) << endl;
 	cout << "isFree2" << m.isFree({ 70, 70 }) << endl;
 
 	// test Expand
 
 	cout << "Test Midpoint2" << endl;
-
+	*/
 	StagePoint sP(start, Point(0, 0), 0.0, 0.0);
-
+	/*
 	auto points2 = midpoint(sP.point, 15);
 	for (auto&& point : points2) {
 		cout << "Point(" << point.x << ", " << point.y << ")" << endl;
@@ -89,17 +91,17 @@ int main() {
 	cout << points2.size() << endl;
 
 	cout << "Test Expand1" << endl;
-
+	*/
 	std::vector<StagePoint> close;
 	std::map<Point, StagePoint> mapPath;
-
+	/*
 	auto res = Expand(sP, m, sP, 15, 25, close, x, mapPath);
 
 	for (auto&& point : res) {
 
 		cout << "(" << point.point.x << ", " << point.point.y << ")" << " Dist: " << point.distance << "; simAngles: " << point.sumAngles << endl;
 	}
-	
+
 	cout << "Expand2" << endl;
 
 	StagePoint currentPoint { Point(151, 299), sP.point, 15.0, 0.0 };
@@ -110,7 +112,7 @@ int main() {
 
 		cout << "(" << point.point.x << ", " << point.point.y << ")" << " Dist: " << point.distance << "; simAngles: " << point.sumAngles << endl;
 	}
-
+	*/
 	cout << "Test Lian" << endl;
 
 	auto timer = std::chrono::steady_clock::now();

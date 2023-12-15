@@ -33,7 +33,7 @@ namespace Algorithms {
 
 			bool validPath(vector<Point> points, Map<cv::Mat> image) {
 
-				for (auto point : points) {
+				for (auto&& point : points) {
 
 					if (!image.isFree(point))
 						return false;
