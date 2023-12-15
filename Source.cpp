@@ -42,6 +42,7 @@ int main() {
 
 	Point start = Point(165, 305);
 	Point goal = Point(1287, 689);
+	//Point goal = Point(410, 420);
 
 
 	Point point = Point(100, 100);
@@ -116,7 +117,7 @@ int main() {
 	cout << "Test Lian" << endl;
 
 	auto timer = std::chrono::steady_clock::now();
-	auto resPath = Lian(start, goal, m, 30, 25);
+	auto resPath = Lian(start, goal, m, 13, 15);
 
 	for (auto&& point : resPath) {
 
