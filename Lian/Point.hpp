@@ -1,4 +1,17 @@
-struct Point {
+#pragma once
 
-	double x, y;
-};
+namespace Algorithms {
+
+	namespace Graph {
+
+		namespace Geometry {
+
+			struct Point {
+
+				int x, y;
+
+				auto operator<=>(const Point& rhs) const = default;
+			};
+		}
+	}
+}

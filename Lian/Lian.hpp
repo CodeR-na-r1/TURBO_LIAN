@@ -1,12 +1,19 @@
+#pragma once
+
+//#include "detail/Geometry.hpp"
+
 namespace Algorithms {
 
 	namespace Graph {
 
-		struct Lian {
+		namespace Lian {
+
+			struct Lian {
 
 
 
-		};
+			};
+		}
 
 	}
 

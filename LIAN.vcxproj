@@ -155,9 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Lian\Detail\Geometry.hpp" />
     <ClInclude Include="Lian\Detail\LianFunctions.hpp" />
     <ClInclude Include="Lian\Detail\Map.hpp" />
@@ -165,6 +162,9 @@
     <ClInclude Include="Lian\Detail\StagePoint.hpp" />
     <ClInclude Include="Lian\Lian.hpp" />
     <ClInclude Include="Lian\Point.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
