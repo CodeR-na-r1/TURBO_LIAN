@@ -64,6 +64,8 @@ namespace Algorithms {
 
 						isAction = false;
 						auto path = unwindingPath(mapPath, start_, goal_);
+						std::cout << "Points: " << path.size() << std::endl;
+						std::cout << "LEnght: " << goal.distance << std::endl;
 						//t.join();
 						return path;
 					}

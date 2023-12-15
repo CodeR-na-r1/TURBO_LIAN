@@ -25,7 +25,10 @@ namespace Algorithms {
 
 				bool isFree(Point point) {
 
-					return ((int)image.at<uchar>(cv::Point(point.x, point.y))) != 0;
+					auto res = (int)image.at<uchar>(cv::Point(point.x, point.y));
+
+					return res != 0;
+					//return ((int)image.at<uchar>(cv::Point(point.x, point.y))) != 0;
 				}
 
 			};
