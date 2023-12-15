@@ -3,6 +3,7 @@
 #include "opencv2/opencv.hpp"
 
 #include <iostream>
+#include <fstream>
 
 #include <chrono>
 #include <thread>
@@ -13,6 +14,7 @@
 
 #include "../Point.hpp"
 #include "StagePoint.hpp"
+#include "Path.hpp"
 #include "Geometry.hpp"
 #include "Map.hpp"
 
@@ -28,6 +30,7 @@ namespace Algorithms {
 			using Algorithms::Graph::Map::Map;
 			using Algorithms::Graph::Geometry::Point;
 			using Algorithms::Graph::Geometry::StagePoint;
+			using Algorithms::Graph::Geometry::Path;
 			using Algorithms::Graph::Geometry::distanceBetweenPoints;
 			using Algorithms::Graph::Geometry::angleBetweenVectors;
 
@@ -78,7 +81,7 @@ namespace Algorithms {
 					if (inClose) {
 						continue;
 					}
-
+					//if (mapPath.contains(midpoint) && angle + point.sumAngles <= mapPath.at(midpoint).sumAngles) {
 					if (mapPath.contains(midpoint) && distanceBetweenPoints(point.point, midpoint) + point.distance < mapPath.at(midpoint).distance) {
 
 						mapPath.at(midpoint) = StagePoint(midpoint,
@@ -168,8 +171,46 @@ namespace Algorithms {
 					//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 				//}
 			}
+			// functions for log
 
+			void logConsole(const Path& path) {
 
+				std::cout << "Points: " << path.points.size() << std::endl;	// log in console
+				std::cout << "Length: " << path.distance << std::endl;
+				std::cout << "SumAngles: " << path.sumAngles << std::endl;
+			}
+
+			void logFile(const std::string& fileName, const Path& path, int deltaDist, int deltaAngle, double codeTime) {
+
+				std::ofstream outLogFile(fileName);
+
+				if (!outLogFile.is_open()) {
+					return;
+				}
+
+				outLogFile << "Path Search Parameters:\n";
+				outLogFile << "Distance delta -> " << deltaDist << "\n";
+				outLogFile << "Angle delta -> " << deltaAngle << "°\n";
+
+				outLogFile << "----- ----- -----" << "\n";
+
+				outLogFile << "Path characteristics:\n";
+				outLogFile << "Distance -> " << std::to_string(path.distance) << "px\n";
+				outLogFile << "Sum angles -> " << std::to_string(path.sumAngles) << "°\n";
+
+				outLogFile << "----- ----- -----" << "\n";
+
+				outLogFile << "Pathfinding time -> " << codeTime << " seconds\n";
+
+				outLogFile << "----- ----- -----" << "\n";
+
+				outLogFile << "Points of path:\n";
+				for (auto&& point : path.points) {
+
+					outLogFile << point.x << ", " << point.y << "\n";
+				}
+				outLogFile << "----- ----- -----" << "\n";
+			}
 		}
 	}
 }

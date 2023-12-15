@@ -10,11 +10,17 @@
 #include <float.h>
 
 #include "Point.hpp"
-#include "Detail/Map.hpp"
 #include "Detail/StagePoint.hpp"
+#include "Detail/Path.hpp"
+#include "Detail/Map.hpp"
 
 #include "detail/Geometry.hpp"
 #include "Detail/LianFunctions.hpp"
+
+#define DIR_RESULTS "./results/"
+
+#define K_DELTA 1
+#define K_ANGLE 0
 
 namespace Algorithms {
 
@@ -28,6 +34,10 @@ namespace Algorithms {
 			using LianFunctions::Expand;
 			using LianFunctions::unwindingPath;
 			using LianFunctions::showImageThread;
+			using LianFunctions::saveImage;
+			using LianFunctions::drawStateOnImage;
+			using LianFunctions::logConsole;
+			using LianFunctions::logFile;
 
 			vector<Point> Lian(Point start_, Point goal_, Map<cv::Mat> img, int deltaDist, int deltaAngle) {
 
@@ -47,27 +57,56 @@ namespace Algorithms {
 
 				vector<StagePoint> res;
 
+				int pathCounter{ 0 };
+				int totalQPath{ 0 };
+				Path bestPath({}, DBL_MAX, DBL_MAX);
+
 				bool isAction{ true };
 				//std::thread t([&isAction, start_, goal_, &currentSPoint, img, &OPEN, &CLOSE, &mapPath]() {
 					//showImageThread(isAction, start_, goal_, currentSPoint.point, img, OPEN, CLOSE, mapPath);
 					//});
+
+				auto startTimer = std::chrono::steady_clock::now();
 				auto timer = std::chrono::steady_clock::now();
 
 				while (!OPEN.empty()) {
 
-					//itCurrent = std::min_element(OPEN.begin(), OPEN.end(), [goal_](auto left, auto right) { return (*left).distance + distanceBetweenPoints((*left).point, goal_) < (*right).distance + distanceBetweenPoints((*right).point, goal_); });
-					itCurrent = std::min_element(OPEN.begin(), OPEN.end(), [goal_](auto left, auto right) { return left.distance + distanceBetweenPoints(left.point, goal_) < right.distance + distanceBetweenPoints(right.point, goal_); });
+					itCurrent = std::min_element(OPEN.begin(),
+						OPEN.end(),
+						[goal_](auto left, auto right) {
+							return
+								(left.distance + distanceBetweenPoints(left.point, goal_)) * K_DELTA
+								+ (left.sumAngles) * K_ANGLE
+								<
+								(right.distance + distanceBetweenPoints(right.point, goal_)) * K_DELTA
+								+ (right.sumAngles) * K_ANGLE;
+						}
+					);
 					currentSPoint = *itCurrent;
 					OPEN.erase(std::remove(OPEN.begin(), OPEN.end(), *itCurrent), OPEN.end());
 
 					if (currentSPoint.point == goal.point) {
 
-						isAction = false;
-						auto path = unwindingPath(mapPath, start_, goal_);
-						std::cout << "Points: " << path.size() << std::endl;
-						std::cout << "LEnght: " << goal.distance << std::endl;
-						//t.join();
-						return path;
+						if (currentSPoint.sumAngles <= bestPath.sumAngles) {
+
+							++pathCounter;
+
+							auto points = unwindingPath(mapPath, start_, goal_);	// save path
+							bestPath = Path(points, currentSPoint.distance, currentSPoint.sumAngles);
+
+							logConsole(bestPath);	// log in console
+
+							double timeCode = std::chrono::duration <double, std::milli>(std::chrono::steady_clock::now() - startTimer).count() / 1000;	// time in seconds
+							logFile(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".txt", bestPath, deltaDist, deltaAngle, timeCode);	// log in file
+
+							auto imgPath = drawStateOnImage(start_, goal_, currentSPoint.point, img, {}, {}, mapPath);
+							saveImage(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".png", imgPath);	// save image with path
+						}
+						else {
+							std::cout << "Path found, but skipped" << std::endl;
+						}
+						++totalQPath;
+						std::cout << "Total path found quantity: " << totalQPath << std::endl;
 					}
 
 					res = Expand(start, img, currentSPoint, deltaDist, deltaAngle, CLOSE, goal_, mapPath);
@@ -90,7 +129,10 @@ namespace Algorithms {
 
 				}
 
-				return {};
+				isAction = false;
+				//t.join();
+
+				return bestPath.points;
 			}
 
 		}
