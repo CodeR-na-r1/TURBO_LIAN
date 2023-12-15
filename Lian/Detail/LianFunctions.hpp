@@ -81,8 +81,8 @@ namespace Algorithms {
 					if (inClose) {
 						continue;
 					}
-					//if (mapPath.contains(midpoint) && angle + point.sumAngles <= mapPath.at(midpoint).sumAngles) {
-					if (mapPath.contains(midpoint) && distanceBetweenPoints(point.point, midpoint) + point.distance < mapPath.at(midpoint).distance) {
+					if (mapPath.contains(midpoint) && angle + point.sumAngles <= mapPath.at(midpoint).sumAngles) {
+					//if (mapPath.contains(midpoint) && distanceBetweenPoints(point.point, midpoint) + point.distance < mapPath.at(midpoint).distance) {
 
 						mapPath.at(midpoint) = StagePoint(midpoint,
 							point.point,

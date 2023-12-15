@@ -53,6 +53,7 @@ namespace Algorithms {
 
 				int itCounter{ 0 };
 				auto itCurrent = OPEN.begin();	// delete it and replace on obj downer
+				auto itOpenSP = OPEN.begin();	// temp obj for find_if in loop
 				StagePoint currentSPoint = start;
 
 				vector<StagePoint> res;
@@ -111,9 +112,18 @@ namespace Algorithms {
 
 					res = Expand(start, img, currentSPoint, deltaDist, deltaAngle, CLOSE, goal_, mapPath);
 
-					for (auto&& sPoint: res) {
-					
-						OPEN.push_back(sPoint);
+					for (auto&& sPoint : res) {
+
+						itOpenSP = std::find_if(OPEN.begin(), OPEN.end(), [&sPoint](auto point) {return point.point == sPoint.point; });
+						if (itOpenSP != OPEN.end()) {
+
+							itOpenSP->parent = sPoint.parent;
+							itOpenSP->distance = sPoint.distance;
+							itOpenSP->sumAngles = sPoint.sumAngles;
+						}
+						else {
+							OPEN.push_back(sPoint);
+						}
 					}
 					CLOSE.push_back(currentSPoint);
 
