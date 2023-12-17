@@ -12,6 +12,7 @@
 #include "Lian/Detail/LianFunctions.hpp"
 
 #define PATH_IMG "resources/map.png"
+#define PATH_IMG_SOURCE "resources/mapSource.bmp"
 
 using namespace std;
 using Algorithms::Graph::Lian::Lian;
@@ -22,6 +23,7 @@ using Algorithms::Graph::LianFunctions::Expand;
 int main() {
 
 	cv::Mat rawImg = cv::imread(PATH_IMG, cv::IMREAD_COLOR);
+	cv::Mat rawImgSource = cv::imread(PATH_IMG_SOURCE, cv::IMREAD_COLOR);
 
 	if (rawImg.empty()) {
 
@@ -37,8 +39,9 @@ int main() {
 	img.setTo(255, img > 200);
 	img.setTo(0, img != 255);
 
-	Map m(img);
-	std::cout << std::boolalpha << ((int)m.getMap().at<uchar>(cv::Point(168, 305))) << std::endl;
+	Map mImg(img);
+	Map mImgSource(rawImgSource);
+	std::cout << std::boolalpha << ((int)mImg.getMap().at<uchar>(cv::Point(168, 305))) << std::endl;
 
 	Point start = Point(165, 305);
 	Point goal = Point(1287, 689);
@@ -117,11 +120,11 @@ int main() {
 	cout << "Test Lian" << endl;
 
 	auto timer = std::chrono::steady_clock::now();
-	auto resPath = Lian(start, goal, m, 13, 15);
+	auto resPath = Lian(start, goal, mImg, mImgSource, 25, 25);
 
 	for (auto&& point : resPath) {
 
-		cv::circle(m.getMap(), cv::Point(point.x, point.y), 3, cv::Scalar(100, 100, 100), 2);
+		cv::circle(mImg.getMap(), cv::Point(point.x, point.y), 3, cv::Scalar(100, 100, 100), 2);
 	}
 	std::cout << "Time code -> " << std::chrono::duration <double, std::milli>(std::chrono::steady_clock::now() - timer).count() << std::endl;
 

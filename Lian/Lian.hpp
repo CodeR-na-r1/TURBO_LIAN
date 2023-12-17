@@ -20,7 +20,7 @@
 #define DIR_RESULTS "./results/"
 
 #define K_DELTA 1
-#define K_ANGLE 0
+#define K_ANGLE 1
 
 namespace Algorithms {
 
@@ -39,7 +39,7 @@ namespace Algorithms {
 			using LianFunctions::logConsole;
 			using LianFunctions::logFile;
 
-			vector<Point> Lian(Point start_, Point goal_, Map<cv::Mat> img, int deltaDist, int deltaAngle) {
+			vector<Point> Lian(Point start_, Point goal_, Map<cv::Mat> img, Map<cv::Mat> drawImg, int deltaDist, int deltaAngle) {
 
 				vector<StagePoint> OPEN, CLOSE;
 				OPEN.reserve(100000);
@@ -100,8 +100,13 @@ namespace Algorithms {
 							double timeCode = std::chrono::duration <double, std::milli>(std::chrono::steady_clock::now() - startTimer).count() / 1000;	// time in seconds
 							logFile(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".txt", bestPath, deltaDist, deltaAngle, timeCode);	// log in file
 
-							auto imgPath = drawStateOnImage(start_, goal_, currentSPoint.point, img, {}, {}, mapPath);
-							saveImage(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".png", imgPath);	// save image with path
+							auto imgPathSource = drawStateOnImage(start_, goal_, currentSPoint.point, drawImg, false, {}, {}, mapPath);
+							saveImage(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".bmp", imgPathSource);	// save source image with path
+
+							auto imgPath = drawStateOnImage(start_, goal_, currentSPoint.point, img, true, {}, {}, mapPath);
+							saveImage(DIR_RESULTS + std::string("Path_") + std::to_string(pathCounter) + ".png", imgPath);	// save processing image with path
+
+							return bestPath.points;
 						}
 						else {
 							std::cout << "Path found, but skipped" << std::endl;
@@ -130,7 +135,7 @@ namespace Algorithms {
 					if (std::chrono::duration <double, std::milli>
 						(std::chrono::steady_clock::now() - timer).count() > 200) {
 
-						showImageThread(isAction, start_, goal_, currentSPoint.point, img, OPEN, CLOSE, mapPath);
+						showImageThread(isAction, start_, goal_, currentSPoint.point, drawImg, OPEN, CLOSE, mapPath);
 						timer = std::chrono::steady_clock::now();
 					}
 

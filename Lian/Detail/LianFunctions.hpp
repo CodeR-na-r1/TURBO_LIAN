@@ -128,13 +128,16 @@ namespace Algorithms {
 				cv::imwrite(nameFile, image.getMap());
 			}
 
-			cv::Mat drawStateOnImage(Point start, Point goal, Point current, Map<cv::Mat> img, const vector<StagePoint>& OPEN, const std::vector<StagePoint>& CLOSE, const std::map<Point, StagePoint>& mapPath) {
+			cv::Mat drawStateOnImage(Point start, Point goal, Point current, Map<cv::Mat> img, bool isGray, const vector<StagePoint>& OPEN, const std::vector<StagePoint>& CLOSE, const std::map<Point, StagePoint>& mapPath) {
 
 				int RADIUS{ 1 };
 				int THICKNESS = -1;
 
 				cv::Mat imgCopy;
-				cv::cvtColor(img.getMap(), imgCopy, cv::COLOR_GRAY2RGB);
+				if (isGray)
+					cv::cvtColor(img.getMap(), imgCopy, cv::COLOR_GRAY2RGB);
+				else
+					imgCopy = img.getMap().clone();
 
 				for (auto&& point : OPEN) {
 
@@ -143,13 +146,13 @@ namespace Algorithms {
 
 				for (auto&& point : CLOSE) {
 
-					cv::circle(imgCopy, cv::Point(point.point.x, point.point.y), RADIUS, cv::Scalar(100, 100, 100), THICKNESS);
+					cv::circle(imgCopy, cv::Point(point.point.x, point.point.y), RADIUS, cv::Scalar(0, 255, 0), THICKNESS);
 				}
 
 				auto path = unwindingPath(mapPath, start, current);
 				for (auto&& point : path) {
 
-					cv::circle(imgCopy, cv::Point(point.x, point.y), RADIUS, cv::Scalar(0, 255, 0), THICKNESS);
+					cv::circle(imgCopy, cv::Point(point.x, point.y), RADIUS +1, cv::Scalar(100, 100, 100), THICKNESS);
 				}
 
 				cv::circle(imgCopy, cv::Point(goal.x, goal.y), RADIUS, cv::Scalar(), THICKNESS);
@@ -167,7 +170,7 @@ namespace Algorithms {
 
 				//while (isAction) {
 
-					showImage(drawStateOnImage(start, goal, current, img, OPEN, CLOSE, mapPath));
+					showImage(drawStateOnImage(start, goal, current, img, false, OPEN, CLOSE, mapPath));
 					//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 				//}
 			}
